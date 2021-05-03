@@ -18,7 +18,7 @@ private:
 public:
     explicit P3_FixedRecord(string filename);
     vector<Alumno3> load();
-    void add(Alumno3 record);
+    void add(const Alumno3& record);
     Alumno3 readRecord(int pos);
     static void test(const string& filename);
 };
@@ -40,14 +40,40 @@ inline vector<Alumno3> P3_FixedRecord::load() {
         alumno.mensualidad = stof(mensualidad);
         dataSet.push_back(alumno);
     }
+    file.close();
     return dataSet;
 }
 
-inline void P3_FixedRecord::add(Alumno3 record) {
+inline void P3_FixedRecord::add(const Alumno3& record) {
+    fstream file(filename, ios::out);
+    file.seekg(0, ios::end);
+    file.write(record.nombre.data(), record.nombre.size());
+    file << '|';
+    file.write(record.apellidos.data(), record.apellidos.size());
+    file << '|';
+    file.write(record.carrera.data(), record.carrera.size());
+    file << '|';
+    string mensualidad = to_string(record.mensualidad);
+    file.write(mensualidad.data(), mensualidad.size());
+    file << '\n';
+    file.close();
 }
 
 inline Alumno3 P3_FixedRecord::readRecord(int pos) {
-    return Alumno3();
+    ifstream file(filename, ios::out | ios::in | ios::binary);
+    while(--pos >= 0){
+        char* iter {};
+        file.getline(iter, '\n');
+    }
+    Alumno3 alumno {};
+    getline(file, alumno.nombre, '|');
+    getline(file, alumno.apellidos, '|');
+    getline(file, alumno.carrera, '|');
+    string mensualidad {};
+    getline(file, mensualidad, '\n');
+    alumno.mensualidad = stof(mensualidad);
+    file.close();
+    return alumno;
 }
 
 inline void P3_FixedRecord::test(const string &filename) {
