@@ -1,33 +1,44 @@
 #include "lib.h"
-struct Alumno3 {
-    string nombre;
-    string apellidos;
-    string carrera;
+
+struct Matricula {
+    string codigo;
+    int ciclo;
     float mensualidad;
+    string observaciones;
 };
-const int P3_sizeAlumno = sizeof(Alumno3);
+
+struct metada
+{
+  int pos;
+  int size;
+}
+
 inline bool operator == (const Alumno3& a1, const Alumno3& a2){
-    int comp = a1.nombre == a2.nombre & a1.apellidos == a2.apellidos &
-               a1.carrera == a2.carrera & a1.mensualidad == a2.mensualidad;
+    int comp = a1.codigo == a2.codigo & a1.ciclo == a2.ciclo &
+               a1.mensualidad == a2.mensualidad & a1.observaciones == a2.observaciones;
     return comp == 0;
 }
 
-class P3_FixedRecord{
+ostream &operator<<(ostream &os, Matricula const &k) {
+    return os <<k.codigo<<" "<<k.ciclo<<" "<<k.mensualidad<<" "<<k.observaciones<<endl;
+}
+
+class P4_FixedRecord{
 private:
     string filename {};
 public:
-    explicit P3_FixedRecord(string filename);
-    vector<Alumno3> load();
+    explicit P4_FixedRecord(string filename);
+    vector<Alumno> load();
     void add(Alumno3 record);
     Alumno3 readRecord(int pos);
     static void test(const string& filename);
 };
 
-inline P3_FixedRecord::P3_FixedRecord(string filename) {
+inline P4_FixedRecord::P4_FixedRecord(string filename) {
     this->filename = filename.append(".txt");
 }
 
-inline vector<Alumno3> P3_FixedRecord::load() {
+inline vector<Alumno3> P4_FixedRecord::load() {
     ifstream file(filename, ios::out | ios::in);
     vector<Alumno3> dataSet {};
     while (!file.eof()) {
@@ -43,13 +54,13 @@ inline vector<Alumno3> P3_FixedRecord::load() {
     return dataSet;
 }
 
-inline void P3_FixedRecord::add(Alumno3 record) {
+inline void P4_FixedRecord::add(Alumno3 record) {
 }
 
-inline Alumno3 P3_FixedRecord::readRecord(int pos) {
+inline Alumno3 P4_FixedRecord::readRecord(int pos) {
     return Alumno3();
 }
 
-inline void P3_FixedRecord::test(const string &filename) {
+inline void P4_FixedRecord::test(const string &filename) {
 
 }

@@ -46,8 +46,10 @@ inline vector<Alumno> P1_FixedRecord::load() {
 inline void P1_FixedRecord::add(Alumno record) {
     ofstream file(filename, ios::app);
     if(!file.is_open()) exit(1);
+
     file.write((char*) &record, P1_sizeAlumno);
-    file << "\n" << flush;
+    file << "\n" ;
+    file << flush;
     file.close();
 }
 
@@ -86,7 +88,7 @@ inline void P1_FixedRecord::test(const string& filename) {
             printf("ERROR: Indice %d, hay un problema con readRecord o load\n", i);
         }
     }
-    Alumno newAlumno = {"1037", "Alonso", "Gutierrez", "CS"};
+    Alumno newAlumno = {"0037", "Alonso", "Gutierrez", "CS"};
     test.add(newAlumno);
     auto newData = test.load();
     if (!(newData[newData.size() - 1] == newAlumno)){

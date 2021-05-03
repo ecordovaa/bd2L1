@@ -77,9 +77,15 @@ inline Alumno3 P3_FixedRecord::readRecord(int pos) {
 }
 
 inline void P3_FixedRecord::test(const string &filename) {
-
+  printf("------ P3 ------\n");
+  string testFilename = filename;
+  ofstream testDeInicializacion (testFilename.append(".dat"), ios::app);
+  if(!testDeInicializacion.is_open()) {
+      printf("ERROR: No se puede abrir el archivo");
+      exit(1);
+  }
+  printf("El archivo ha sido abierto con normalidad.\n");
+  auto test = P3_FixedRecord(filename);
 }
 
 //-- Métodos --
-
-
