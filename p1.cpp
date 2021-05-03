@@ -44,10 +44,11 @@ inline vector<Alumno> P1_FixedRecord::load() {
 }
 
 inline void P1_FixedRecord::add(Alumno record) {
-    ofstream file(filename, ios::app);
-    if(!file.is_open()) exit(1);
+    fstream file(filename, ios::app);
+    if(!file.is_open()) exit(-2);
+    file << '\n';
     file.write((char*) &record, P1_sizeAlumno);
-    file << "\n" << flush;
+    file << flush;
     file.close();
 }
 
