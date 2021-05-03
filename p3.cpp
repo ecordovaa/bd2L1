@@ -1,3 +1,4 @@
+#include <iostream>
 #include "lib.h"
 struct Alumno3 {
     string nombre;
@@ -8,26 +9,26 @@ struct Alumno3 {
 const int P3_sizeAlumno = sizeof(Alumno3);
 inline bool operator == (const Alumno3& a1, const Alumno3& a2){
     int comp = a1.nombre == a2.nombre & a1.apellidos == a2.apellidos &
-               a1.carrera == a2.carrera & a1.mensualidad == a2.mensualidad;
+               a1.carrera == a2.carrera & (float) a1.mensualidad == (float) a2.mensualidad;
     return comp == 0;
 }
 
-class P3_FixedRecord{
+class P3_VariableRecord{
 private:
     string filename {};
 public:
-    explicit P3_FixedRecord(string filename);
+    explicit P3_VariableRecord(string filename);
     vector<Alumno3> load();
     void add(const Alumno3& record);
     Alumno3 readRecord(int pos);
     static void test(const string& filename);
 };
 
-inline P3_FixedRecord::P3_FixedRecord(string filename) {
+inline P3_VariableRecord::P3_VariableRecord(string filename) {
     this->filename = filename.append(".txt");
 }
 
-inline vector<Alumno3> P3_FixedRecord::load() {
+inline vector<Alumno3> P3_VariableRecord::load() {
     ifstream file(filename, ios::out | ios::in);
     vector<Alumno3> dataSet {};
     while (!file.eof()) {
@@ -44,7 +45,7 @@ inline vector<Alumno3> P3_FixedRecord::load() {
     return dataSet;
 }
 
-inline void P3_FixedRecord::add(const Alumno3& record) {
+inline void P3_VariableRecord::add(const Alumno3& record) {
     fstream file(filename, ios::out);
     file.seekg(0, ios::end);
     file.write(record.nombre.data(), record.nombre.size());
@@ -59,11 +60,11 @@ inline void P3_FixedRecord::add(const Alumno3& record) {
     file.close();
 }
 
-inline Alumno3 P3_FixedRecord::readRecord(int pos) {
+inline Alumno3 P3_VariableRecord::readRecord(int pos) {
     ifstream file(filename, ios::out | ios::in | ios::binary);
-    while(--pos >= 0){
+    while(--pos > 0){
         char* iter {};
-        file.getline(iter, '\n');
+        if(!file.eof()) file.getline(iter, '\n');
     }
     Alumno3 alumno {};
     getline(file, alumno.nombre, '|');
@@ -76,8 +77,36 @@ inline Alumno3 P3_FixedRecord::readRecord(int pos) {
     return alumno;
 }
 
-inline void P3_FixedRecord::test(const string &filename) {
-
+inline void P3_VariableRecord::test(const string &filename) {
+    printf("------ P3 ------\n");
+    string testFilename = filename;
+    ofstream testDeInicializacion (testFilename.append(".txt"), ios::app);
+    if(!testDeInicializacion.is_open()) {
+        printf("ERROR: No se puede abrir el archivo.\n");
+        exit(1);
+    }
+    printf("El archivo ha sido abierto con normalidad.\n");
+    auto test = P3_VariableRecord(filename);
+    auto data = test.load();
+    int errCount {};
+    for (int i = 0; i < data.size(); i++) {
+        printf("Alumno %d: Nombre(%s) Apellidos(%s), Carrera(%s), Mensualidad(%f)\n",
+               i, data[i].nombre.data(), data[i].apellidos.data(), data[i].carrera.data(),
+               data[i].mensualidad);
+        auto valorReal = test.readRecord(i);
+        if (!(data[i] == valorReal)) {
+            errCount++;
+            printf("ERROR: Indice %d, hay un problema con readRecord o load\n", i);
+        }
+    }
+    Alumno3 newAlumno = {"Alonso", "Gutierrez", "CS", 2000};
+    test.add(newAlumno);
+    auto newData = test.load();
+    if (!(newData[newData.size() - 1] == newAlumno)){
+        errCount++;
+        printf("ERROR: Hay un problema con el add\n");
+    }
+    printf("Test1 terminado con %d errores \n", errCount);
 }
 
 //-- Métodos --
